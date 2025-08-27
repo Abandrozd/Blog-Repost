@@ -1,0 +1,122 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f6fa;
+    min-height: 100vh;
+    margin: 0;
+    /* Remove flex to allow default normal page flow */
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+}
+
+.account-container {
+    background: #ffffff;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+
+    /* Center horizontally */
+    margin: 20px auto;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-main {
+  flex: 1 0 auto; /* fill remaining space */
+  display: flex;
+  justify-content: center;  /* horizontal center */
+  align-items: center;      /* vertical center */
+  padding: 20px;
+}
+
+/* Headline / Username display */
+.account-container p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  background-color: #f0f2f5;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* Form labels */
+.account-container label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Select boxes & readonly inputs */
+.account-container select,
+.account-container input[readonly] {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  margin-bottom: 18px;
+  appearance: none; /* Remove OS dropdown arrow styling for custom style */
+}
+
+/* Hover & focus states for inputs */
+.account-container select:focus,
+.account-container input[readonly]:focus {
+  border-color: #4CAF50;
+  outline: none;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+}
+
+.account-container button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.account-container button[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+/* Make the author_page_link input full width and neatly styled */
+.account-container input[name="author_page_link"] {
+  width: 100%;
+  box-sizing: border-box; /* include padding and border inside width */
+  padding: 10px 14px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  color: #222;
+  border: 2px solid #4caf50;
+  border-radius: 8px;
+  background-color: #f9fff9;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  white-space: nowrap; /* prevent multiline */
+  text-overflow: ellipsis; /* show ... if too long */
+}
+
+/* Focus style for better UX */
+.account-container input[name="author_page_link"]:focus {
+  border-color: #388e3c;
+  box-shadow: 0 0 8px rgba(56, 142, 60, 0.6);
+  outline: none;
+}
+
+
+/* Optional: make placeholder lighter and italic */
+.account-container input[name="author_page_link"]::placeholder {
+    color: #99bb99;
+    font-style: italic;
+}

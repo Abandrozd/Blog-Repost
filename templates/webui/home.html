@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="{% static 'styling/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/layout.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/nav.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/home.css' %}" />
+</head>
+<body class="home-body">
+    <header>
+        <h1>Название</h1>
+        {% if user.is_authenticated %}
+          <p class="user-greeting">Привет, {{ user.username }}!</p>
+          <nav>
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+              {% csrf_token %}
+              <button class="btn btn-logout" type="submit">Выйти</button>
+            </form>
+            <!-- Navigation links -->
+              <a href="{% url 'home' %}" class="btn-link">Главная</a>
+            <a href="{% url 'profile' %}" class="btn-link">Профиль</a>
+            <a href="{% url 'requests' %}" class="btn-link">Мои заявки</a>
+            <a href="{% url 'available_requests' %}" class="btn-link">Доступные заявки</a>
+            <a href="{% url 'request' %}" class="btn-link">Новая заявка</a>
+          </nav>
+        {% else %}
+          <nav>
+            <a href="{% url 'register' %}" class="btn-link">Регистрация</a>
+            <a href="{% url 'login' %}" class="btn-link">Вход</a>
+          </nav>
+        {% endif %}
+    </header>
+
+    <main class="home-main">
+        <h2>Добро пожаловать!</h2>
+        <p>Здесь вы можете создавать заявки на обмен книгами, просматривать свои текущие заявки и выбирать доступные заявки других пользователей.</p>
+    </main>
+</body>
+</html>

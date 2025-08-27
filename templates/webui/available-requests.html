@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load static %}
+
+    <meta charset="UTF-8" />
+    <title>Доступные заявки</title>
+    <link rel="stylesheet" href="{% static 'styling/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/layout.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/components.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/nav.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/inline-edit.css' %}" />
+
+</head>
+<body>
+    <header>
+        <h1>Название</h1>
+        {% if user.is_authenticated %}
+          <p class="user-greeting">Привет, {{ user.username }}!</p>
+          <nav>
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+              {% csrf_token %}
+              <button class="btn btn-logout" type="submit">Выйти</button>
+            </form>
+            <!-- Navigation links -->
+              <a href="{% url 'home' %}" class="btn-link">Главная</a>
+            <a href="{% url 'profile' %}" class="btn-link">Профиль</a>
+            <a href="{% url 'requests' %}" class="btn-link">Мои заявки</a>
+            <a href="{% url 'available_requests' %}" class="btn-link">Доступные заявки</a>
+            <a href="{% url 'request' %}" class="btn-link">Новая заявка</a>
+          </nav>
+        {% else %}
+          <nav>
+            <a href="{% url 'register' %}" class="btn-link">Регистрация</a>
+            <a href="{% url 'login' %}" class="btn-link">Вход</a>
+          </nav>
+        {% endif %}
+    </header>
+    <div class="center-container">
+        <div class="content-wrapper">
+            <div class="page-header">Доступные заявки</div>
+                <div class="requests-container">
+                    {% if requests %}
+                        {% for req in requests %}
+                            <div class="request-card">
+                                <div class="request-title">Название книги: {{ req.book_name }}</div>
+                                <div class="request-info">Пользователь: {{ req.user.username }}</div>
+                                {% if req.user.profile.author_page_link %}
+                                    <div class="request-info">Ссылка: <a href="{{ req.user.profile.author_page_link }}" target="_blank">{{ req.user.profile.author_page_link }}</a></div>
+                                {% endif %}
+                                <div class="request-info">Дата обмена: {{ req.date_exchange }}</div>
+                                <div class="request-info">Дата подачи: {{ req.date_created }}</div>
+
+
+                                <form method="post" action="{% url 'toggle-save-request' req.id %}">
+                                    {% csrf_token %}
+                                    {% if req.saved %}
+                                        <button type="submit" class="btn-secondary">Удалить из сохраненных</button>
+                                    {% else %}
+                                        <button type="submit" class="btn-primary">Сохранить</button>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>Нет доступных заявок.</p>
+                    {% endif %}
+                </div>
+        </div>
+    </div>
+    <script src="{% static 'scripts/available-requests.js' %}"></script>
+</body>
+</html>

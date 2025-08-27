@@ -1,0 +1,124 @@
+.editable {
+  cursor: pointer;
+  display: inline-block;
+  max-width: 100%;          /* Same max width restriction */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border: 1px dashed transparent;
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.editable:hover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.inline-edit-input {
+    border: 2px solid #007bff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: white;
+    font-size: inherit;
+    font-family: inherit;
+    min-width: 120px;
+}
+
+.inline-edit-input:focus {
+    outline: none;
+    border-color: #0056b3;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.saving {
+    background-color: #fff3cd;
+    color: #856404;
+    font-style: italic;
+}
+
+.updated {
+    background-color: #d4edda;
+    color: #155724;
+    transition: background-color 0.3s;
+}
+
+.edit-hint {
+    font-size: 0.8em;
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: #a71d2a;
+    border: none;
+    color: #ed3570;
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+.delete-btn:hover {
+    color: #a81919;
+    background-color: #630a12;
+    transition: color 0.3s ease;
+}
+
+/* Make request-card position relative for absolute delete button */
+.request-card {
+    position: relative;
+    padding: 12px;
+    border: 3px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.request-card:hover {
+    border-color: #007bff;
+}
+
+.request-title {
+    font-weight: bold;
+    font-size: 14px;   /* smaller font size */
+    margin-bottom: 8px;
+    color: #222;
+    max-width: calc(100% - 30px); /* reduce width to prevent overlap */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.request-title .editable {
+    display: inline-block;
+    font-size: 16px;   /* match smaller font size */
+    padding: 2px 4px;  /* reduce padding if you have any */
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.inline-edit-input,
+.edit-input {
+  width: 100%;               /* Fill container width */
+  max-width: 100%;
+  box-sizing: border-box;    /* Include padding and border inside width */
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.inline-edit-input:focus,
+.edit-input:focus {
+  outline: none;
+  border-color: #007bff;
+  background-color: #fff;
+}

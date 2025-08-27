@@ -1,0 +1,147 @@
+/* Request cards */
+.requests-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    justify-content: center;
+}
+
+.requests-container form button {
+  display: block;        /* allow width and margin to work */
+  width: auto;           /* make width fit content */
+  min-width: 150px;      /* optional: maintain a minimum width */
+  padding: 8px 20px;     /* smaller vertical and horizontal padding */
+  font-size: 14px;       /* slightly smaller font size */
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin: 0 auto;        /* center horizontally */
+  transition: background-color 0.3s ease;
+}
+
+.requests-container form button.btn-primary {
+  background-color: #4caf50;
+  color: white;
+}
+
+.requests-container form button.btn-primary:hover {
+  background-color: #45a049;
+}
+
+.requests-container form button.btn-secondary {
+  background-color: #f44336;
+  color: white;
+}
+
+.requests-container form button.btn-secondary:hover {
+  background-color: #d32f2f;
+}
+
+.request-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    padding: 15px 18px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.request-card:hover {
+    transform: translateY(-4px);
+}
+
+.request-card.selected {
+    border: 2px solid #4caf50;
+    background: #f9fff9;
+}
+
+.request-card.selected::before {
+    content: "✓";
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #4caf50;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.request-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #222;
+}
+
+.request-info {
+    font-size: 14px;
+    margin: 4px 0;
+    color: #555;
+}
+
+.request-action {
+    margin-top: 12px;
+    text-align: center;
+    width: 90%;
+}
+
+.request-action button {
+    padding: 6px 12px;
+    font-size: 16px;
+    width: auto;
+    min-width: 150px;
+    border-radius: 6px;
+    background: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-block;
+}
+
+.request-action button:hover {
+    background: #45a049;
+}
+
+.request-card.selected .request-action button {
+    background: #f44336;
+}
+
+.request-card.selected .request-action button:hover {
+    background: #d32f2f;
+}
+
+.page-header {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.editable {
+    cursor: pointer;
+    border: 1px dashed transparent;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+.editable:hover {
+    border-color: #007bff;
+    background-color: #f8f9fa;
+}
+.editing {
+    border-color: #007bff !important;
+    background-color: #fff !important;
+}
+.edit-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: inherit;
+    font-family: inherit;
+}
+.edit-input:focus {
+    outline: none;
+}
