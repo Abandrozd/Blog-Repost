@@ -11,6 +11,12 @@ class CustomUserCreationForm(UserCreationForm):
         help_text="Укажите ваш никнейм в Telegram (например, @example)."
     )
 
+    author_page_link = forms.URLField(
+        required=True,
+        label="Ссылка на страницу автора в VK",
+        help_text="Введите ссылку на вашу страницу автора в VK (например, https://vk.com/yourprofile)."
+    )
+
     password1 = forms.CharField(
         label="Пароль",
         strip=False,
@@ -31,7 +37,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ("username", "telegram_nickname", "password1", "password2")
+        fields = ("username", "author_page_link", "telegram_nickname", "password1", "password2")
         labels = {
             'username': 'Имя пользователя',
         }
@@ -42,9 +48,11 @@ class CustomUserCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit)
         telegram_nickname = self.cleaned_data['telegram_nickname']
+        author_page_link = self.cleaned_data['author_page_link']
         UserProfile.objects.update_or_create(
             user=user,
-            defaults={'telegram_nickname': telegram_nickname}
+            defaults={'author_page_link': author_page_link,
+                'telegram_nickname': telegram_nickname,}
         )
         return user
 
