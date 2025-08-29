@@ -41,11 +41,32 @@ def profile(request):
         'profile': user_profile,
     })
 
+
 @login_required
 def available_requests(request):
+    genre = request.GET.get('genre')
+    groupsize = request.GET.get('groupsize')
+
     saved_qs = SavedRequest.objects.filter(user=request.user, request=OuterRef('pk'))
-    requests = BlogRequest.objects.exclude(user=request.user).annotate(saved=Exists(saved_qs)).order_by('-date_exchange')
-    return render(request, 'webui/available-requests.html', {'requests': requests})
+    qs = BlogRequest.objects.exclude(user=request.user).exclude(saves__user=request.user)
+
+    # Filter by genre and group size linked via user profile if provided
+    if genre:
+        qs = qs.filter(user__profile__genre=genre)
+    if groupsize:
+        qs = qs.filter(user__profile__groupsize=groupsize)
+
+    requests = qs.annotate(saved=Exists(saved_qs)) \
+        .select_related('user', 'user__profile') \
+        .order_by('-date_exchange')
+
+    context = {
+        'requests': requests,
+        'selected_genre': genre or '',
+        'selected_groupsize': groupsize or '',
+    }
+    return render(request, 'webui/available-requests.html', context)
+
 
 @login_required
 def toggle_save_request(request, pk):
@@ -54,12 +75,28 @@ def toggle_save_request(request, pk):
         obj, created = SavedRequest.objects.get_or_create(user=request.user, request=br)
         if not created:
             obj.delete()
-    return redirect('available_requests')
+
+        # Redirect back to the referring page or default to available_requests
+        referer = request.META.get('HTTP_REFERER')
+        if referer and '/requests/' in referer and 'available' not in referer:
+            return redirect('requests')
+        else:
+            return redirect('available_requests')
 
 @login_required
 def show_requests(request):
+    # Created requests by user
     user_requests = BlogRequest.objects.filter(user=request.user).order_by('-date_exchange')
-    return render(request, 'webui/requests.html', {'requests': user_requests})
+
+    # Accepted (saved) requests - Profile accepts requests that belong to others but saved by user
+    accepted_requests = BlogRequest.objects.filter(saves__user=request.user).exclude(user=request.user).order_by('-date_exchange')
+
+    context = {
+        'created_requests': user_requests,
+        'accepted_requests': accepted_requests,
+    }
+    return render(request, 'webui/requests.html', context)
+
 
 @login_required(login_url='/login/')
 def create_request(request):

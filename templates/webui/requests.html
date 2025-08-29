@@ -40,8 +40,8 @@
         <div class="content-wrapper">
             <div class="page-header">Мои заявки</div>
             <div class="requests-container">
-                {% if requests %}
-                    {% for req in requests %}
+                {% if created_requests %}
+                    {% for req in created_requests %}
                         <div class="request-card" data-request-id="{{ req.id }}">
                             <button class="delete-btn" aria-label="Удалить заявку" title="Удалить заявку">&times;</button>
 
@@ -67,6 +67,45 @@
             </div>
             <div class="edit-hint">
                 Нажмите на название книги или дату обмена, чтобы изменить
+            </div>
+        </div>
+        <div class="content-wrapper">
+            <div class="page-header">Принятые заявки</div>
+            <div class="requests-container">
+                {% if accepted_requests %}
+                        {% for req in accepted_requests %}
+                            <div class="request-card" data-request-id="{{ req.id }}">
+                                <div class="request-title">Название книги: {{ req.book_name }}</div>
+                                <div class="request-info">Пользователь: {{ req.user.username }}</div>
+                                {% if req.user.profile.genre %}
+                                    <div class="request-info">
+                                        Жанр: {{ req.user.profile.get_genre_display }}
+                                    </div>
+                                {% endif %}
+                                {% if req.user.profile.groupsize %}
+                                    <div class="request-info">
+                                        Подписчики: {{ req.user.profile.get_groupsize_display }}
+                                    </div>
+                                {% endif %}
+
+                                {% if req.user.profile.author_page_link %}
+                                    <div class="request-info">
+                                      <a href="{{ req.user.profile.author_page_link }}" target="_blank" class="author-page-link-btn">Перейти</a>
+                                    </div>
+                                {% endif %}
+
+                                <div class="request-info">Дата обмена: {{ req.date_exchange }}</div>
+                                <div class="request-info">Дата подачи: {{ req.date_created }}</div>
+
+                                <form method="post" action="{% url 'toggle-save-request' req.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-secondary">Отменить заявку</button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>У вас пока нет принятых заявок.</p>
+                    {% endif %}
             </div>
         </div>
     </main>

@@ -36,21 +36,58 @@
           </nav>
         {% endif %}
     </header>
+
     <div class="center-container">
         <div class="content-wrapper">
+            <div class="filters">
+                <form method="get" action="{% url 'available_requests' %}" class="filters-form">
+                        <label for="filter-genre">Жанр:</label>
+                    <select id="filter-genre" name="genre">
+                        <option value="" {% if not selected_genre %}selected{% endif %}>Все</option>
+                        <option value="genre1" {% if selected_genre == 'genre1' %}selected{% endif %}>Жанр 1</option>
+                        <option value="genre2" {% if selected_genre == 'genre2' %}selected{% endif %}>Жанр 2</option>
+                        <option value="genre3" {% if selected_genre == 'genre3' %}selected{% endif %}>Жанр 3</option>
+                        <option value="genre4" {% if selected_genre == 'genre4' %}selected{% endif %}>Жанр 4</option>
+                    </select>
+
+                    <label for="filter-subscribers">Подписчики:</label>
+                    <select id="filter-subscribers" name="groupsize">
+                        <option value="" {% if not selected_groupsize %}selected{% endif %}>Все</option>
+                        <option value="size1" {% if selected_groupsize == 'size1' %}selected{% endif %}>&lt;100</option>
+                        <option value="size2" {% if selected_groupsize == 'size2' %}selected{% endif %}>100-500</option>
+                        <option value="size3" {% if selected_groupsize == 'size3' %}selected{% endif %}>500-1000</option>
+                        <option value="size4" {% if selected_groupsize == 'size4' %}selected{% endif %}>&gt;1000</option>
+                    </select>
+                    <button type="submit" id="apply-filter">Фильтровать</button>
+                </form>
+            </div>
+
             <div class="page-header">Доступные заявки</div>
                 <div class="requests-container">
                     {% if requests %}
                         {% for req in requests %}
                             <div class="request-card">
-                                <div class="request-title">Название книги: {{ req.book_name }}</div>
+                                <div class="request-title">Название: {{ req.book_name }}</div>
                                 <div class="request-info">Пользователь: {{ req.user.username }}</div>
-                                {% if req.user.profile.author_page_link %}
-                                    <div class="request-info">Ссылка: <a href="{{ req.user.profile.author_page_link }}" target="_blank">{{ req.user.profile.author_page_link }}</a></div>
+                                {% if req.user.profile.genre %}
+                                    <div class="request-info">
+                                        Жанр: {{ req.user.profile.get_genre_display }}
+                                    </div>
                                 {% endif %}
+                                {% if req.user.profile.groupsize %}
+                                    <div class="request-info">
+                                        Подписчики: {{ req.user.profile.get_groupsize_display }}
+                                    </div>
+                                {% endif %}
+
+                                {% if req.user.profile.author_page_link %}
+                                    <div class="request-info">
+                                      <a href="{{ req.user.profile.author_page_link }}" target="_blank" class="author-page-link-btn">Перейти</a>
+                                    </div>
+                                {% endif %}
+
                                 <div class="request-info">Дата обмена: {{ req.date_exchange }}</div>
                                 <div class="request-info">Дата подачи: {{ req.date_created }}</div>
-
 
                                 <form method="post" action="{% url 'toggle-save-request' req.id %}">
                                     {% csrf_token %}

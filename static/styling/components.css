@@ -145,3 +145,62 @@
 .edit-input:focus {
     outline: none;
 }
+
+.author-page-link-btn {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background-color: #4caf50;
+  color: white !important;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  margin-top: 8px;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+}
+
+.author-page-link-btn:hover {
+  background-color: #45a049;
+  color: white !important;
+  text-decoration: none;
+}
+
+.filters-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+    align-items: center;
+}
+
+.filters-form label {
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.filters-form select {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.filters-form button {
+    padding: 7px 20px;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 130px;
+}
+
+.filters-form button:hover {
+    background-color: #45a049;
+}
