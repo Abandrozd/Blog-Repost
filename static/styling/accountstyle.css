@@ -6,28 +6,25 @@ body {
 
 .account-container {
     background: #ffffff;
-    padding: 25px 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 32px 36px 20px 36px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
     width: 100%;
-    max-width: 400px;
-
-    /* Center horizontally */
-    margin: 20px auto;
+    max-width: 410px;
+    margin: 32px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
 }
 
-.page-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.page-main {
-  flex: 1 0 auto; /* fill remaining space */
-  display: flex;
-  justify-content: center;  /* horizontal center */
-  align-items: center;      /* vertical center */
-  padding: 20px;
+h2 {
+    text-align: center;
+    color: #3c495e;
+    margin-bottom: 18px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }
 
 /* Headline / Username display */
@@ -114,4 +111,138 @@ body {
 .account-container input[name="author_page_link"]::placeholder {
     color: #99bb99;
     font-style: italic;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-main {
+  flex: 1 0 auto; /* fill remaining space */
+  display: flex;
+  justify-content: center;  /* horizontal center */
+  align-items: center;      /* vertical center */
+  padding: 20px;
+}
+
+.profile-main-row {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    padding: 0 0 4px 0;
+}
+
+.profile-info-labels, .profile-info-values {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-info-labels {
+    min-width: 130px;
+    background: #f7f7fb;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding: 14px 10px 14px 16px;
+    border-right: 1.5px solid #ececf2;
+    box-sizing: border-box;
+}
+.profile-label {
+    font-weight: 600;
+    color: #8273ba;
+    font-size: 15.3px;
+    letter-spacing: 0.01em;
+}
+.profile-info-values {
+    flex: 1;
+    background: #f8f9fc;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding: 14px 16px 14px 14px;
+    box-sizing: border-box;
+}
+.profile-value {
+    color: #325053;
+    font-size: 15px;
+}
+
+.profile-divider {
+    height: 0;
+    border-bottom: 2.5px solid #e6e2ef;
+    margin: 22px 0 16px 0;
+    width: 90%;
+    align-self: center;
+}
+
+/* Responsive: stack fields/sections on small screens */
+@media (max-width: 540px) {
+    .account-container { padding: 2vw 2vw 10vw 2vw; max-width: 99vw; }
+    .profile-main-row { flex-direction: column; }
+    .profile-info-labels, .profile-info-values {
+        border-radius: 10px 10px 0 0;
+        border-right: none;
+        padding: 9px 14px;
+    }
+    .profile-divider { margin: 16px 0 8px 0;}
+    .social-section { margin-top: 10px; }
+}
+
+.profile-info-labels,
+.profile-info-values {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.profile-info-labels {
+    min-width: 145px;
+    padding: 14px 8px 14px 16px;
+    border-right: 1.5px solid #ececf2;
+}
+.profile-info-values {
+    padding: 14px 16px 14px 8px;
+    flex: 1;
+}
+.profile-label {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+}
+.profile-value {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+}
+
+.profile-info-values input,
+.profile-info-values select {
+    width: 100%;
+    font-size: 15px;
+    border-radius: 5px;
+    padding: 7px 10px;
+    margin-bottom: 0;
+    border: 1px solid #bbb;
+    background: #fff;
+}
+
+.profile-info-values input:focus,
+.profile-info-values select:focus {
+    border-color: #6B46C1;
+}
+
+.account-container a,
+.account-container input[type="url"] {
+    color: #6B46C1;
+    font-weight: bold;
+    text-decoration: underline dotted;
+    border-radius: 5px;
+    transition: color 0.2s, box-shadow 0.2s;
+}
+
+.account-container a:hover,
+.account-container input[type="url"]:focus {
+    color: #3B226C;
+    box-shadow: 0 1px 5px #ae96e0;
+    text-decoration: underline solid;
 }

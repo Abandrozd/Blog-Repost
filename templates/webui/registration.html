@@ -3,50 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Регистрация</title>
-
     {% load static %}
-
     <link rel="stylesheet" href="{% static 'styling/forms.css' %}">
     <link rel="stylesheet" href="{% static 'styling/base.css' %}">
-
 </head>
 <body>
-
 <div class="registration-container">
     <h2>Регистрация</h2>
     <form method="post">
         {% csrf_token %}
-
         {% for field in form %}
             <div>
                 {{ field.label_tag }}
                 {{ field }}
-
-                {% if form.non_field_errors %}
+                {% if field.errors %}
                   <div class="error-list">
-                    {% for error in form.non_field_errors %}
+                    {% for error in field.errors %}
                       <p class="error-message">{{ error }}</p>
                     {% endfor %}
                   </div>
                 {% endif %}
-
-                {% if field.errors %}
-                    <div class="error-list">
-                        {% for error in field.errors %}
-                            <p class="error-message">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
                 {% if field.help_text %}
                     <p class="help-text">{{ field.help_text|safe }}</p>
                 {% endif %}
             </div>
         {% endfor %}
-
+        {% if form.non_field_errors %}
+          <div class="error-list" style="margin-bottom:15px;">
+            {% for error in form.non_field_errors %}
+              <p class="error-message">{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
         <button type="submit">Зарегистрироваться</button>
     </form>
+    <p class="switch-link" style="margin-top:20px;">
+      Уже есть аккаунт?
+      <a href="{% url 'login' %}">Войти</a>
+    </p>
 </div>
-
 </body>
 </html>

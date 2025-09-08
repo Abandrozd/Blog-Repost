@@ -1,3 +1,11 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
 .registration-container, .form-container {
     background: white;
     padding: 30px;
@@ -52,4 +60,49 @@ input:focus, select:focus {
     background-color: #f0f2f5;
     padding: 10px;
     border-radius: 5px;
+}
+
+.registration-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 32px 38px;
+  min-width: 320px;
+  max-width: 380px;
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.switch-link {
+  text-align: center;
+  font-size: 15px;
+  color: #666;
+}
+.switch-link a {
+  font-weight: 600;
+  color: #3a72e7;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.switch-link a:hover {
+  color: #1f4fb0;
+  text-decoration: underline;
+}
+.error-list {
+  margin-top: 3px;
+  margin-bottom: 8px;
+}
+.error-message {
+  color: #e4572e;
+  font-size: 14px;
+  margin: 0 0 2px 0;
+}
+.help-text {
+  color: #7b7b7b;
+  font-size: 13px;
+  margin-top: 2px;
+  margin-bottom: 6px;
 }

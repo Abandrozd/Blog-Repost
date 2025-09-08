@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <title>Профиль пользователя</title>
+  <link rel="stylesheet" href="{% static 'styling/base.css' %}" />
+  <link rel="stylesheet" href="{% static 'styling/accountstyle.css' %}" />
+  <link rel="stylesheet" href="{% static 'styling/layout.css' %}" />
+  <link rel="stylesheet" href="{% static 'styling/nav.css' %}" />
+  <link rel="stylesheet" href="{% static 'styling/inline-edit.css' %}" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <header>
+      <h1>Название</h1>
+      {% if user.is_authenticated %}
+        <p class="user-greeting">Привет, {{ user.username }}!</p>
+        <nav>
+          <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button class="btn btn-logout" type="submit">Выйти</button>
+          </form>
+          <a href="{% url 'home' %}" class="btn-link">Главная</a>
+          <a href="{% url 'profile' %}" class="btn-link">Профиль</a>
+          <a href="{% url 'requests' %}" class="btn-link">Мои заявки</a>
+          <a href="{% url 'available_requests' %}" class="btn-link">Доступные заявки</a>
+          <a href="{% url 'request' %}" class="btn-link">Новая заявка</a>
+        </nav>
+      {% else %}
+        <nav>
+          <a href="{% url 'register' %}" class="btn-link">Регистрация</a>
+          <a href="{% url 'login' %}" class="btn-link">Вход</a>
+        </nav>
+      {% endif %}
+    </header>
+    <main class="page-main">
+      <div class="account-container">
+        <h2>Профиль пользователя</h2>
+        <div class="profile-main-row">
+            <!-- Labels (Left Column) -->
+            <div class="profile-info-labels">
+                <div class="profile-label">Имя пользователя:</div>
+                <div class="profile-label">Подписчики:</div>
+                <div class="profile-label">Жанр(ы):</div>
+                <div class="profile-label">Телеграм:</div>
+            </div>
+            <!-- Values (Right Column) -->
+            <div class="profile-info-values">
+                <div class="profile-value">{{ author.username|default:"—" }}</div>
+                <div class="profile-value">{{ profile.subscribers_count|default:"Не указано" }}</div>
+                <div class="profile-value">{{ profile.get_genre_display|default:"Не указано" }}</div>
+                <div class="profile-value">{{ profile.telegram_nickname|default:"Не указано" }}</div>
+            </div>
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <div class="social-section">
+            <div class="social-title">Социальные сети</div>
+            <div class="social-buttons separated">
+                {% if profile.vk_link %}
+                    <a href="{{ profile.vk_link }}" class="social-btn vk-btn left" target="_blank">
+                        <span class="logo-wrap">
+                            <img src="{% static 'images/vk_logo.png' %}" alt="VK" class="social-logo">
+                        </span>
+                        <span class="label">ВКонтакте</span>
+                    </a>
+                {% endif %}
+                {% if profile.litnet_link %}
+                    <a href="{{ profile.litnet_link }}" class="social-btn litnet-btn right" target="_blank">
+                        <span class="logo-wrap">
+                            <img src="{% static 'images/litnet_logo.jpg' %}" alt="Litnet" class="social-logo">
+                        </span>
+                        <span class="label">Литнет</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</body>
+</html>

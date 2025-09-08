@@ -22,29 +22,27 @@ class UserProfile(models.Model):
     Stores additional information for each user.
     Each UserProfile is linked to a single User instance.
     """
-
-    # This creates a one-to-opyne link with Django's existing User model.
-    # on_delete=models.CASCADE means if a User is deleted, their profile is deleted too.
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
 
     author_page_link = models.URLField(max_length=500, blank=True, verbose_name="Ссылка на страницу автора")
-    groupsize = models.CharField(max_length=10, choices=GROUPSIZE_CHOICES, blank=True, null=True)
-    genre = models.CharField(max_length=10, choices=GENRE_CHOICES, blank=True, null=True)
-
-    # This is the extra field you wanted for the Telegram nickname.
-    # max_length is required for CharField.
-    # blank=True makes this field optional, so users don't have to provide it.
+    litnet_link = models.URLField(max_length=500, blank=True, verbose_name="Страница автора на Литнет")
+    vk_link = models.URLField(max_length=500, blank=True, verbose_name="Страница автора VK")
+    subscribers_count = models.PositiveIntegerField(null=True, blank=True, verbose_name="Количество подписчиков")
+    genres = models.CharField(max_length=50, choices=GENRE_CHOICES, blank=True, verbose_name="Жанры автора")
     telegram_nickname = models.CharField(max_length=100, blank=True)
 
-    # This function defines what will be displayed in the Django admin panel.
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
 class BlogRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book_name = models.CharField(max_length=255)
-    date_created = models.DateField(auto_now_add=True)  # usually auto_now_add date of creation
-    date_exchange = models.DateField()
+    litnet_link = models.URLField(max_length=500, verbose_name="Страница автора на Литнет")
+    vk_link = models.URLField(max_length=500, verbose_name="Страница автора VK")
+    start_date = models.DateField(verbose_name="Дата старта")
+    available_from = models.DateField(verbose_name="Можно начать с")
+    available_to = models.DateField(verbose_name="Можно закончить по")
+    date_created = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.book_name

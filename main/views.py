@@ -4,6 +4,7 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Exists, OuterRef
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm, BlogRequestForm, ProfileForm
 from .models import BlogRequest, SavedRequest, UserProfile
 from datetime import datetime
@@ -21,7 +22,16 @@ def register(request):
     return render(request, "webui/registration.html", {"form": form})
 
 def home(request):
-    return render(request, "webui/home.html")
+    if request.user.is_authenticated:
+        action_dates = list(
+            BlogRequest.objects.filter(saves__user=request.user).exclude(user=request.user)
+            .values_list('start_date', flat=True)
+        )
+        action_dates = [d.strftime("%Y-%m-%d") for d in action_dates]
+    else:
+        action_dates = []
+    return render(request, "webui/home.html", {"action_dates": action_dates})
+
 
 @login_required
 def profile(request):
@@ -41,9 +51,24 @@ def profile(request):
         'profile': user_profile,
     })
 
+def public_profile(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    profile = user.profile  # OneToOneField ensures this exists
+    return render(request, 'webui/public-profile.html', {
+        'author': user,
+        'profile': profile,
+    })
+
 
 @login_required
 def available_requests(request):
+    GROUPSIZE_RANGES = {
+        'size1': (0, 100),
+        'size2': (100, 500),
+        'size3': (500, 1000),
+        'size4': (1000, 1000000),
+    }
+
     genre = request.GET.get('genre')
     groupsize = request.GET.get('groupsize')
 
@@ -52,13 +77,14 @@ def available_requests(request):
 
     # Filter by genre and group size linked via user profile if provided
     if genre:
-        qs = qs.filter(user__profile__genre=genre)
+        qs = qs.filter(user__profile__genres=genre)
     if groupsize:
-        qs = qs.filter(user__profile__groupsize=groupsize)
+        low, high = GROUPSIZE_RANGES[groupsize]
+        qs = qs.filter(user__profile__subscribers_count__gte=low, user__profile__subscribers_count__lt=high)
 
     requests = qs.annotate(saved=Exists(saved_qs)) \
         .select_related('user', 'user__profile') \
-        .order_by('-date_exchange')
+        .order_by('-start_date')
 
     context = {
         'requests': requests,
@@ -86,10 +112,10 @@ def toggle_save_request(request, pk):
 @login_required
 def show_requests(request):
     # Created requests by user
-    user_requests = BlogRequest.objects.filter(user=request.user).order_by('-date_exchange')
+    user_requests = BlogRequest.objects.filter(user=request.user).order_by('-start_date')
 
     # Accepted (saved) requests - Profile accepts requests that belong to others but saved by user
-    accepted_requests = BlogRequest.objects.filter(saves__user=request.user).exclude(user=request.user).order_by('-date_exchange')
+    accepted_requests = BlogRequest.objects.filter(saves__user=request.user).exclude(user=request.user).order_by('-start_date')
 
     context = {
         'created_requests': user_requests,
@@ -129,11 +155,11 @@ def update_request(request, pk):
                 return JsonResponse({'success': False, 'error': 'Название должно быть от 1 до 255 символов'})
             blog_request.book_name = value
 
-        elif field == 'date_exchange':
+        elif field == 'start_date':
             try:
                 # Parse date from ISO format (YYYY-MM-DD)
                 date_obj = datetime.strptime(value, '%Y-%m-%d').date()
-                blog_request.date_exchange = date_obj
+                blog_request.start_date = date_obj
             except ValueError:
                 return JsonResponse({'success': False, 'error': 'Неверный формат даты'})
         else:

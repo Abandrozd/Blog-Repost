@@ -68,7 +68,8 @@
                         {% for req in requests %}
                             <div class="request-card">
                                 <div class="request-title">Название: {{ req.book_name }}</div>
-                                <div class="request-info">Пользователь: {{ req.user.username }}</div>
+                                <div class="request-info">Пользователь: <a href="{% url 'public_profile' req.user.id %}">{{ req.user.username }}</a></div>
+
                                 {% if req.user.profile.genre %}
                                     <div class="request-info">
                                         Жанр: {{ req.user.profile.get_genre_display }}
@@ -82,12 +83,38 @@
 
                                 {% if req.user.profile.author_page_link %}
                                     <div class="request-info">
-                                      <a href="{{ req.user.profile.author_page_link }}" target="_blank" class="author-page-link-btn">Перейти</a>
+                                      <a href="{{ req.user.profile.author_page_link }}" target="_blank" class="author-page-link-btn">Ссылка на книгу</a>
                                     </div>
                                 {% endif %}
 
-                                <div class="request-info">Дата обмена: {{ req.date_exchange }}</div>
-                                <div class="request-info">Дата подачи: {{ req.date_created }}</div>
+                                <div class="request-info">
+                                    Дата старта: {{ req.start_date|date:"d.m.Y" }}
+                                </div>
+                                <div class="request-info">
+                                    Свободен с: {{ req.available_from|date:"d.m.Y" }} по {{ req.available_to|date:"d.m.Y" }}
+                                </div>
+                                <div class="request-info">
+                                    Дата подачи: {{ req.date_created|date:"d.m.Y" }}
+                                </div>
+
+                                <div class="social-buttons separated">
+                                    {% if req.user.profile.vk_link %}
+                                        <a href="{{ req.user.profile.vk_link }}" class="social-btn vk-btn left">
+                                            <span class="logo-wrap">
+                                                <img src="{% static 'images/vk_logo.png' %}" alt="VK" class="social-logo">
+                                            </span>
+                                            <span class="label">ВКонтакте</span>
+                                        </a>
+                                    {% endif %}
+                                    {% if req.user.profile.litnet_link %}
+                                        <a href="{{ req.user.profile.litnet_link }}" class="social-btn litnet-btn right">
+                                            <span class="logo-wrap">
+                                                <img src="{% static 'images/litnet_logo.jpg' %}" alt="Litnet" class="social-logo">
+                                            </span>
+                                            <span class="label">Литнет</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
 
                                 <form method="post" action="{% url 'toggle-save-request' req.id %}">
                                     {% csrf_token %}

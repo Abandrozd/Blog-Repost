@@ -37,20 +37,57 @@
     </header>
       <main class="page-main">
         <div class="account-container">
-          <h2>Профиль пользователя</h2>
-          <p><strong>Имя пользователя: </strong>{{ user.username }}</p>
-          {% if profile.author_page_link %}
-            <p><strong>Ссылка на страницу автора:</strong>
-              <a href="{{ profile.author_page_link }}" target="_blank">{{ profile.author_page_link }}</a>
-            </p>
-          {% endif %}
-          <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-
-            <button type="submit">Сохранить</button>
-          </form>
+            <h2>Профиль пользователя</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="profile-main-row">
+                    <div class="profile-info-labels">
+                        <div class="profile-label">Имя пользователя:</div>
+                        <div class="profile-label">Размер аудитории:</div>
+                        <div class="profile-label">Жанр:</div>
+                        <div class="profile-label">Телеграм:</div>
+                        <div class="profile-label">Страница Литнет:</div>
+                        <div class="profile-label">Страница VK:</div>
+                    </div>
+                    <div class="profile-info-values">
+                        <div class="profile-value">{{ user.username }}</div>
+                        <div class="profile-value">
+                            {{ form.groupsize }}
+                            {% for err in form.groupsize.errors %}
+                                <div class="error-message">{{ err }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="profile-value">
+                            {{ form.genre }}
+                            {% for err in form.genre.errors %}
+                                <div class="error-message">{{ err }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="profile-value">
+                            {{ form.telegram_nickname }}
+                            {% for err in form.telegram_nickname.errors %}
+                                <div class="error-message">{{ err }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="profile-value">
+                            {{ form.litnet_link }}
+                            {% for err in form.litnet_link.errors %}
+                                <div class="error-message">{{ err }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="profile-value">
+                            {{ form.vk_link }}
+                            {% for err in form.vk_link.errors %}
+                                <div class="error-message">{{ err }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <button type="submit">Сохранить</button>
+            </form>
         </div>
+
+
       </main>
     </div>
   </body>

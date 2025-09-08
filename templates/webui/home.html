@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="{% static 'styling/nav.css' %}" />
     <link rel="stylesheet" href="{% static 'styling/home.css' %}" />
 </head>
-<body class="home-body">
+<body class="home-body" style="background: #fcf4ec;">
     <header>
-        <h1>Название</h1>
+        <h1 class="brand-title"><span style="color:#F28519;">Book</span>Blog Обмен</h1>
         {% if user.is_authenticated %}
           <p class="user-greeting">Привет, {{ user.username }}!</p>
           <nav>
@@ -19,8 +19,7 @@
               {% csrf_token %}
               <button class="btn btn-logout" type="submit">Выйти</button>
             </form>
-            <!-- Navigation links -->
-              <a href="{% url 'home' %}" class="btn-link">Главная</a>
+            <a href="{% url 'home' %}" class="btn-link">Главная</a>
             <a href="{% url 'profile' %}" class="btn-link">Профиль</a>
             <a href="{% url 'requests' %}" class="btn-link">Мои заявки</a>
             <a href="{% url 'available_requests' %}" class="btn-link">Доступные заявки</a>
@@ -34,9 +33,61 @@
         {% endif %}
     </header>
 
-    <main class="home-main">
-        <h2>Добро пожаловать!</h2>
-        <p>Здесь вы можете создавать заявки на обмен книгами, просматривать свои текущие заявки и выбирать доступные заявки других пользователей.</p>
-    </main>
+<main class="home-main horizontal-flex">
+    <div class="horizontal-flex">
+        <section class="info-pane card-block">
+        <h2 class="brand-title"><span style="color:#F28519;">Book</span>Blog Обмен</h2>
+        <p class="main-description">
+            Платформа для обмена блогами между авторами Литнет и ВКонтакте.<br>
+            Находите новых читателей и увеличивайте охваты!
+        </p>
+        <ul class="quickstats">
+            <li>
+                <span>{{ stats.books|default:"32" }}</span><br>Объявлений
+            </li>
+            <li>
+                <span>{{ stats.authors|default:"6" }}</span><br>Авторов
+            </li>
+            <li>
+                <span>{{ stats.partners|default:"18" }}</span><br>Обменов
+            </li>
+        </ul>
+        <div class="cta-row">
+            <a class="btn-cta" href="{% url 'available_requests' %}">Смотреть заявки</a>
+            <a class="btn-cta btn-secondary" href="{% url 'register' %}">Регистрация</a>
+        </div>
+    </section>
+
+    <section class="calendar-pane card-block">
+        <h3>Ваш календарь:</h3>
+        <div id="calendar"></div>
+    </section>
+    </div>
+</main>
+
+<!-- Horizontal row for cards below -->
+<div class="cards-row">
+    <div class="feature-card">
+        <h4>Авторы</h4>
+        <p>Публичные профили и подбор по блогам</p>
+        <a href="{% url 'profile' %}">К авторам</a>
+    </div>
+    <div class="feature-card">
+        <h4>Заявки</h4>
+        <p>Просматривайте и фильтруйте актуальные обмены</p>
+        <a href="{% url 'available_requests' %}">К заявкам</a>
+    </div>
+    <div class="feature-card">
+        <h4>Ваши обмены</h4>
+        <p>Управляйте своими действующими заявками</p>
+        <a href="{% url 'requests' %}">Мои заявки</a>
+    </div>
+</div>
+
+
+    <script>
+    var actionDates = {{ action_dates|safe }};
+    </script>
+    <script src="{% static 'scripts/calendar.js' %}"></script>
 </body>
 </html>

@@ -4,16 +4,42 @@
   <meta charset="UTF-8" />
   <title>Вход</title>
   {% load static %}
-    <link rel="stylesheet" href="{% static 'styling/forms.css' %}">
-    <link rel="stylesheet" href="{% static 'styling/base.css' %}">
-
+  <link rel="stylesheet" href="{% static 'styling/forms.css' %}">
+  <link rel="stylesheet" href="{% static 'styling/base.css' %}">
 </head>
 <body>
-  <h2>Вход в систему</h2>
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Войти</button>
-  </form>
+  <div class="registration-container">
+    <h2>Вход в систему</h2>
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      {% for field in form %}
+        <div>
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}
+          <div class="error-list">
+              {% for error in field.errors %}
+                <p class="error-message">{{ error }}</p>
+              {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      {% if form.non_field_errors %}
+        <div class="error-list" style="margin-bottom:15px;">
+          {% for error in form.non_field_errors %}
+            <p class="error-message">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <button type="submit">Войти</button>
+    </form>
+    <p class="switch-link" style="margin-top:20px;">
+      Нет аккаунта?
+      <a href="{% url 'register' %}">Зарегистрироваться</a>
+    </p>
+  </div>
 </body>
 </html>
