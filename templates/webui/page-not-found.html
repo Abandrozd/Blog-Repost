@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <title>Страница не найдена</title>
+  <link rel="stylesheet" href="{% static 'styling/base.css' %}">
+  <link rel="stylesheet" href="{% static 'styling/components.css' %}">
+  <style>
+    .error-wrap { max-width: 720px; margin: 60px auto; text-align: center; padding: 24px; }
+    .error-code { font-size: 72px; font-weight: 800; margin-bottom: 8px; }
+    .error-title { font-size: 24px; margin-bottom: 16px; }
+    .error-text { color: #666; margin-bottom: 24px; }
+    .btn-link { text-decoration: none; color: #1a73e8; }
+  </style>
+</head>
+<body>
+  <div class="error-wrap">
+    <div class="error-code">404</div>
+    <div class="error-title">Упс! Эта заявка не найдена</div>
+    <div class="error-text">Похоже, такой страницы больше нет или адрес введён с ошибкой.</div>
+    <div>
+      <a class="btn-link" href="{% url 'home' %}">← На главную</a>
+      <span> · </span>
+      <a class="btn-link" href="{% url 'available_requests' %}">К доступным заявкам →</a>
+    </div>
+  </div>
+</body>
+</html>

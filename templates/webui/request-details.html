@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <title>Детали заявки - {{ blog_request.book_name }}</title>
+    <link rel="stylesheet" href="{% static 'styling/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/components.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/layout.css' %}" />
+    <link rel="stylesheet" href="{% static 'styling/nav.css' %}" />
+     <link rel="stylesheet" href="{% static 'styling/inline-edit.css' %}" />
+</head>
+<body>
+    <header>
+        <h1>Название</h1>
+        {% if user.is_authenticated %}
+          <p class="user-greeting">Привет, {{ user.username }}!</p>
+          <nav>
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+              {% csrf_token %}
+              <button class="btn btn-logout" type="submit">Выйти</button>
+            </form>
+            <a href="{% url 'home' %}" class="btn-link">Главная</a>
+            <a href="{% url 'profile' %}" class="btn-link">Профиль</a>
+            <a href="{% url 'requests' %}" class="btn-link">Мои заявки</a>
+            <a href="{% url 'available_requests' %}" class="btn-link">Доступные заявки</a>
+            <a href="{% url 'request' %}" class="btn-link">Новая заявка</a>
+          </nav>
+        {% endif %}
+    </header>
+
+    <main class="page-main">
+        <div class="content-wrapper">
+            <div class="page-header">
+                Детали заявки {{ blog_request.book_name }}
+                <a href="{% url 'requests' %}" class="btn-link" style="font-size: 0.9em; margin-left: 20px;">← Назад к заявкам</a>
+            </div>
+
+            <div class="request-card">
+                <div class="request-title">{{ blog_request.book_name }}</div>
+                <div class="request-info">Дата подачи: {{ blog_request.date_created|date:"d.m.Y" }}</div>
+                <div class="request-info">Дата старта: {{ blog_request.start_date|date:"d.m.Y" }}</div>
+                <div class="request-info">Свободен с: {{ blog_request.available_from|date:"d.m.Y" }} по {{ blog_request.available_to|date:"d.m.Y" }}</div>
+                <div class="request-info"><strong>Количество откликов: {{ acceptance_count }}</strong></div>
+            </div>
+
+            {% if acceptances %}
+                <div class="page-header">Кто откликнулся на заявку</div>
+                <div class="requests-container">
+                    {% for acceptance in acceptances %}
+                        <div class="request-card">
+                            <div class="request-title">
+                                <a href="{% url 'public_profile' acceptance.user.id %}" class="btn-link">
+                                    {{ acceptance.user.username }}
+                                </a>
+                            </div>
+                            <div class="request-info">Дата отклика: {{ acceptance.created_at|date:"d.m.Y H:i" }}</div>
+
+                            {% if acceptance.user.profile.genres %}
+                                <div class="request-info">
+                                    Жанр: {{ acceptance.user.profile.get_genres_display }}
+                                </div>
+                            {% endif %}
+
+                            {% if acceptance.user.profile.subscribers_count %}
+                                <div class="request-info">
+                                    Подписчиков: {{ acceptance.user.profile.subscribers_count }}
+                                </div>
+                            {% endif %}
+
+                            {% if acceptance.user.profile.telegram_nickname %}
+                                <div class="request-info">
+                                    Telegram: @{{ acceptance.user.profile.telegram_nickname }}
+                                </div>
+                            {% endif %}
+
+                            <div class="social-buttons separated">
+                                {% if profile.vk_link %}
+                                    <a href="{{ profile.vk_link }}" class="social-btn vk-btn left">
+                                        <span class="logo-wrap">
+                                            <img src="{% static 'images/vk_logo.png' %}" alt="VK" class="social-logo">
+                                        </span>
+                                        <span class="label">ВКонтакте</span>
+                                    </a>
+                                {% endif %}
+                                {% if profile.litnet_link %}
+                                    <a href="{{ profile.litnet_link }}" class="social-btn litnet-btn right">
+                                        <span class="logo-wrap">
+                                            <img src="{% static 'images/litnet_logo.jpg' %}" alt="Litnet" class="social-logo">
+                                        </span>
+                                        <span class="label">Литнет</span>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>На эту заявку пока никто не откликнулся.</p>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>

@@ -111,11 +111,16 @@ def toggle_save_request(request, pk):
 
 @login_required
 def show_requests(request):
-    # Created requests by user
+    # Created requests by user with acceptance counts
     user_requests = BlogRequest.objects.filter(user=request.user).order_by('-start_date')
 
+    # Add acceptance count to each request
+    for req in user_requests:
+        req.acceptance_count = SavedRequest.objects.filter(request=req).count()
+
     # Accepted (saved) requests - Profile accepts requests that belong to others but saved by user
-    accepted_requests = BlogRequest.objects.filter(saves__user=request.user).exclude(user=request.user).order_by('-start_date')
+    accepted_requests = BlogRequest.objects.filter(saves__user=request.user).exclude(user=request.user).order_by(
+        '-start_date')
 
     context = {
         'created_requests': user_requests,
@@ -136,6 +141,19 @@ def create_request(request):
     else:
         form = BlogRequestForm()
     return render(request, 'webui/request.html', {"form": form})
+
+
+@login_required
+def request_details(request, pk):
+    blog_request = get_object_or_404(BlogRequest, pk=pk, user=request.user)
+    acceptances = SavedRequest.objects.filter(request=blog_request).select_related('user', 'user__profile').order_by(
+        '-created_at')
+    context = {
+        'blog_request': blog_request,
+        'acceptances': acceptances,
+        'acceptance_count': acceptances.count(),
+    }
+    return render(request, 'webui/request-details.html', context)
 
 
 @login_required
@@ -182,3 +200,6 @@ def delete_request(request, pk):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+
+def custom_404(request, exception):
+    return render(request, 'webui/page-not-found.html', status=404)

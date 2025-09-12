@@ -15,7 +15,9 @@ urlpatterns = [
     path('requests/<int:pk>/toggle-save/', views.toggle_save_request, name='toggle-save-request'),
     path('requests/<int:pk>/update/', views.update_request, name='update_request'),
     path('requests/<int:pk>/delete/', views.delete_request, name='delete_request'),
+    path('requests/<int:pk>/details/', views.request_details, name='request_details'),
 
     path("login/", auth_views.LoginView.as_view(template_name="webui/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
 ]
+

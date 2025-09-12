@@ -62,6 +62,14 @@
                             <div class="request-info">
                                 Свободен с: {{ req.available_from|date:"d.m.Y" }} по {{ req.available_to|date:"d.m.Y" }}
                             </div>
+                            <div class="request-info">
+                                Откликов: {{ req.acceptance_count }}
+                                {% if req.acceptance_count > 0 %}
+                                    <a href="{% url 'request_details' req.id %}">
+                                        Посмотреть кто откликнулся
+                                    </a>
+                                {% endif %}
+                            </div>
                         </div>
                     {% endfor %}
                 {% else %}
