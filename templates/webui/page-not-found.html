@@ -17,12 +17,15 @@
 <body>
   <div class="error-wrap">
     <div class="error-code">404</div>
-    <div class="error-title">Упс! Эта заявка не найдена</div>
-    <div class="error-text">Похоже, такой страницы больше нет или адрес введён с ошибкой.</div>
+    <div class="error-title">Упс! Страница не найдена</div>
+    <div class="error-text">Похоже, страница, которую вы ищете, не существует или была удалена.<br>
+                            Проверьте адрес или воспользуйтесь ссылками ниже.</div>
     <div>
       <a class="btn-link" href="{% url 'home' %}">← На главную</a>
-      <span> · </span>
-      <a class="btn-link" href="{% url 'available_requests' %}">К доступным заявкам →</a>
+      <span> · · </span>
+      <a class="btn-link" href="{% url 'available_requests' %}">К заявкам</a>
+      <span> · · </span>
+      <a class="btn-link" href="{% url 'available_requests' %}">К профилю →</a>
     </div>
   </div>
 </body>
