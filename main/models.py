@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # This model extends Django's built-in User model to add extra fields.
 
@@ -17,22 +19,21 @@ GENRE_CHOICES = [
     ('genre4', 'Жанр 4'),
 ]
 
-class UserProfile(models.Model):
-    """
-    Stores additional information for each user.
-    Each UserProfile is linked to a single User instance.
-    """
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     author_page_link = models.URLField(max_length=500, blank=True, verbose_name="Ссылка на страницу автора")
     litnet_link = models.URLField(max_length=500, blank=True, verbose_name="Страница автора на Литнет")
     vk_link = models.URLField(max_length=500, blank=True, verbose_name="Страница автора VK")
-    subscribers_count = models.PositiveIntegerField(null=True, blank=True, verbose_name="Количество подписчиков")
+    subscribers_count = models.CharField(blank=True, verbose_name="Количество подписчиков")
     genres = models.CharField(max_length=50, choices=GENRE_CHOICES, blank=True, verbose_name="Жанры автора")
     telegram_nickname = models.CharField(max_length=100, blank=True)
 
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Баланс")
+
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
 
 class BlogRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -59,3 +60,9 @@ class SavedRequest(models.Model):
                 name='unique_save_per_user_request'
             )
         ]
+
+
+@receiver(post_save, sender=User)
+def create_profile_for_new_user(sender, instance, created, **kwargs):
+    if created and not hasattr(instance, 'profile'):
+        UserProfile.objects.get_or_create(user=instance)
