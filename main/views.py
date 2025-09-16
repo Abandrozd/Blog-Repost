@@ -1,3 +1,6 @@
+from datetime import date
+from datetime import datetime
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.contrib.auth import login
 from django.views.decorators.http import require_POST
@@ -7,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm, BlogRequestForm, ProfileForm
 from .models import BlogRequest, SavedRequest, UserProfile
-from datetime import datetime
+
+from django.contrib import messages
 import json
 
 def register(request):
@@ -86,28 +90,69 @@ def available_requests(request):
         .select_related('user', 'user__profile') \
         .order_by('-start_date')
 
+    # Create blocked dates dictionary with properly formatted strings
+    blocked_dates = {}
+    for req in requests:
+        taken_dates = SavedRequest.objects.filter(request=req).values_list('share_due_date', flat=True)
+        blocked_dates[req.id] = [
+            d.strftime("%Y-%m-%d") for d in taken_dates if d is not None
+        ]
+
     context = {
         'requests': requests,
         'selected_genre': genre or '',
         'selected_groupsize': groupsize or '',
+        'today': date.today().isoformat(),
+        'blocked_dates_json': json.dumps(blocked_dates, cls=DjangoJSONEncoder)
     }
+
     return render(request, 'webui/available-requests.html', context)
 
 
 @login_required
 def toggle_save_request(request, pk):
+    br = get_object_or_404(BlogRequest, pk=pk)
     if request.method == 'POST':
-        br = get_object_or_404(BlogRequest, pk=pk)
-        obj, created = SavedRequest.objects.get_or_create(user=request.user, request=br)
-        if not created:
-            obj.delete()
+        share_due_date = request.POST.get('share_due_date')
+        user_has_saved = SavedRequest.objects.filter(user=request.user, request=br).exists()
 
-        # Redirect back to the referring page or default to available_requests
+        # Remove request (cancelling) — no date posted
+        if user_has_saved and not share_due_date:
+            SavedRequest.objects.filter(user=request.user, request=br).delete()
+
+        # Saving new request — must have a date
+        elif share_due_date:
+            try:
+                share_due_date_obj = datetime.strptime(share_due_date, '%Y-%m-%d').date()
+            except Exception:
+                return render(request, "webui/error.html", {"error": "Неверный формат даты."})
+
+            min_allowed = max(date.today(), br.available_from)
+            if share_due_date_obj < min_allowed or share_due_date_obj > br.available_to:
+                return render(request, "webui/error.html", {"error": f"Выберите дату от {min_allowed} до {br.available_to}."})
+
+            date_taken = SavedRequest.objects.filter(request=br, share_due_date=share_due_date).exists()
+            if date_taken:
+                messages.error(request, "Этот день уже занят для этой заявки.")
+                return redirect('available_requests')
+
+            # Not already saved and date is free
+            if not user_has_saved:
+                SavedRequest.objects.create(
+                    user=request.user,
+                    request=br,
+                    share_due_date=share_due_date
+                )
+        else:
+            return render(request, "webui/error.html", {"error": "Дата должна быть выбрана."})
+
         referer = request.META.get('HTTP_REFERER')
         if referer and '/requests/' in referer and 'available' not in referer:
             return redirect('requests')
         else:
             return redirect('available_requests')
+
+
 
 @login_required
 def show_requests(request):

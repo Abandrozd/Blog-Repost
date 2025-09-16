@@ -55,7 +55,14 @@
                                     {{ acceptance.user.username }}
                                 </a>
                             </div>
+
                             <div class="request-info">Дата отклика: {{ acceptance.created_at|date:"d.m.Y H:i" }}</div>
+
+                            {% if acceptance.share_due_date %}
+                                <div class="request-info">
+                                    Дата, когда Вы должны обменять пост: {{ acceptance.share_due_date|date:"d.m.Y" }}
+                                </div>
+                            {% endif %}
 
                             {% if acceptance.user.profile.genres %}
                                 <div class="request-info">
@@ -76,16 +83,16 @@
                             {% endif %}
 
                             <div class="social-buttons separated">
-                                {% if profile.vk_link %}
-                                    <a href="{{ profile.vk_link }}" class="social-btn vk-btn left">
+                                {% if acceptance.user.profile.vk_link %}
+                                    <a href="{{ acceptance.user.profile.vk_link }}" class="social-btn vk-btn left">
                                         <span class="logo-wrap">
                                             <img src="{% static 'images/vk_logo.png' %}" alt="VK" class="social-logo">
                                         </span>
                                         <span class="label">ВКонтакте</span>
                                     </a>
                                 {% endif %}
-                                {% if profile.litnet_link %}
-                                    <a href="{{ profile.litnet_link }}" class="social-btn litnet-btn right">
+                                {% if acceptance.user.profile.litnet_link %}
+                                    <a href="{{ acceptance.user.profile.litnet_link }}" class="social-btn litnet-btn right">
                                         <span class="logo-wrap">
                                             <img src="{% static 'images/litnet_logo.jpg' %}" alt="Litnet" class="social-logo">
                                         </span>

@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="{% static 'styling/components.css' %}" />
     <link rel="stylesheet" href="{% static 'styling/nav.css' %}" />
     <link rel="stylesheet" href="{% static 'styling/inline-edit.css' %}" />
-
+    <link rel="stylesheet" href="{% static 'styling/message.css' %}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 </head>
 <body>
     <header>
@@ -36,6 +37,14 @@
           </nav>
         {% endif %}
     </header>
+
+    {% if messages %}
+      <div id="toast-container">
+        {% for message in messages %}
+          <div class="toast toast-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
 
     <div class="center-container">
         <div class="content-wrapper">
@@ -121,7 +130,18 @@
                                     {% if req.saved %}
                                         <button type="submit" class="btn-secondary">Удалить из сохраненных</button>
                                     {% else %}
-                                        <button type="submit" class="btn-primary">Сохранить</button>
+                                        <div class="action-row">
+                                            <label for="share_due_date_{{ req.id }}" class="date-label">В какую&nbsp;дату сделать пост:</label>
+                                            <input type="text"
+                                                   name="share_due_date"
+                                                   id="share_due_date_{{ req.id }}"
+                                                   required
+                                                   class="styled-date"
+                                                   min="{% if today > req.available_from|date:'Y-m-d' %}{{ today }}{% else %}{{ req.available_from|date:'Y-m-d' }}{% endif %}"
+                                                   max="{{ req.available_to|date:'Y-m-d' }}"
+                                                   title="Дата до которой пользователь должен сделать пост/репост">
+                                            <button type="submit" class="btn-primary">Сохранить</button>
+                                        </div>
                                     {% endif %}
                                 </form>
                             </div>
@@ -132,6 +152,46 @@
                 </div>
         </div>
     </div>
-    <script src="{% static 'scripts/available-requests.js' %}"></script>
+    <script>
+     var blockedDates = {{ blocked_dates_json|safe }};
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js" defer></script>
+    <script src="{% static 'scripts/available-requests.js' %}" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toast auto-hide
+            const toast = document.getElementById('toast-container');
+            if (toast) {
+                setTimeout(() => { toast.style.display = 'none'; }, 3500);
+            }
+
+            // flatpickr calendar initialization
+            if (typeof flatpickr !== "undefined" && typeof blockedDates !== "undefined") {
+                document.querySelectorAll('input.styled-date').forEach(input => {
+                    // Find request id from input id (share_due_date_XX)
+                    let reqId = input.id.split('_')[3]; // Note: changed from [2] to [3]
+                    let disables = blockedDates[reqId] || [];
+                    let min = input.getAttribute('min');
+                    let max = input.getAttribute('max');
+
+                    flatpickr(input, {
+                        dateFormat: "Y-m-d",
+                        minDate: min,
+                        maxDate: max,
+                        disable: disables,
+                        locale: "ru",
+                        onDayCreate: function(dObj, dStr, fp, dayElem) {
+                            // Add visual indication for disabled dates
+                            if (disables.includes(dayElem.dateObj.toISOString().split('T')[0])) {
+                                dayElem.classList.add('taken-date');
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>

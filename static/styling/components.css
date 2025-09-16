@@ -204,3 +204,48 @@
 .filters-form button:hover {
     background-color: #45a049;
 }
+
+/* Style the row for date + button */
+.action-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.date-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #4caf50;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.styled-date {
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    background: #f9fafb;
+    color: #222;
+    transition: border-color 0.2s;
+    min-width: 140px;
+    outline: none;
+}
+.styled-date:focus {
+    border-color: #4caf50;
+    background: #fff;
+}
+
+@media (max-width: 600px) {
+    .action-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+    .styled-date {
+        width: 100%;
+    }
+}

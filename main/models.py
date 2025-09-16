@@ -52,13 +52,18 @@ class SavedRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saved_requests')
     request = models.ForeignKey('BlogRequest', on_delete=models.CASCADE, related_name='saves')
     created_at = models.DateTimeField(auto_now_add=True)
+    share_due_date = models.DateField(null=True, blank=True, verbose_name="Дата когда нужно сделать репост")
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'request'],
                 name='unique_save_per_user_request'
-            )
+            ),
+            models.UniqueConstraint(
+                fields=['request', 'share_due_date'],
+                name='unique_share_date_per_request'
+            ),
         ]
 
 

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'styling/layout.css' %}" />
     <link rel="stylesheet" href="{% static 'styling/nav.css' %}" />
     <link rel="stylesheet" href="{% static 'styling/inline-edit.css' %}" />
+
 </head>
 <body>
     <header>
@@ -86,7 +87,7 @@
                 {% if accepted_requests %}
                         {% for req in accepted_requests %}
                             <div class="request-card" data-request-id="{{ req.id }}">
-                                <div class="request-title">Название книги: {{ req.book_name }}</div>
+                                <div class="request-title">Название: {{ req.book_name }}</div>
                                 <div class="request-info">Пользователь: {{ req.user.username }}</div>
                                 {% if req.user.profile.genre %}
                                     <div class="request-info">
