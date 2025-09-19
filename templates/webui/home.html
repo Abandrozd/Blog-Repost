@@ -60,7 +60,21 @@
 
     <section class="calendar-pane card-block">
         <h3>Ваш календарь:</h3>
+        <div class="calendar-header">
+            <button id="prev-month" class="calendar-nav">&lt;</button>
+            <span id="calendar-title"></span>
+            <button id="next-month" class="calendar-nav">&gt;</button>
+        </div>
         <div id="calendar"></div>
+        <hr>
+        <div class="calendar-legend">
+            <strong>Обозначения:</strong>
+            <ul class="legend-list">
+                <li><span class="legend-color" style="background:#3adb62;"></span>Нужно сделать репост</li>
+                <li><span class="legend-color" style="background:#2196F3;"></span>Ваша заявка подана</li>
+                <li><span class="legend-color" style="background:#ffc0cb;"></span>Нет действий/свободно</li>
+            </ul>
+        </div>
     </section>
     </div>
 </main>
@@ -87,6 +101,8 @@
 
     <script>
     var actionDates = {{ action_dates|safe }};
+    var requestDates = {{ own_request_dates|safe }};
+    var ownRequestMap = {{ own_request_map|safe }};
     </script>
     <script src="{% static 'scripts/calendar.js' %}"></script>
 </body>

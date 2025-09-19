@@ -1,15 +1,28 @@
+const today = new Date();
+let currentYear = today.getFullYear();
+let currentMonth = today.getMonth() + 1; // 1-based
+
+const monthNames = [
+    "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль",
+    "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+];
+
 function isActionDay(date) {
     return actionDates.includes(date);
+}
+function isRequestDay(date) {
+    return requestDates.includes(date);
 }
 
 function renderCalendar(year, month) {
     const calendar = document.getElementById("calendar");
     calendar.innerHTML = '';
     let d = new Date(year, month - 1, 1);
+
     let table = document.createElement('table');
     let row = document.createElement('tr');
 
-    // Weekday headers
+    // Header (days of week)
     ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(h => {
         let th = document.createElement('th');
         th.textContent = h;
@@ -18,16 +31,16 @@ function renderCalendar(year, month) {
     table.appendChild(row);
     row = document.createElement('tr');
 
-    // Padding at start for correct weekday
+    // Empty cells before first day
     let weekDay = d.getDay();
-    weekDay = (weekDay + 6) % 7; // Mon=0, Sun=6
+    weekDay = (weekDay + 6) % 7;
     for (let i = 0; i < weekDay; i++) {
         let empty = document.createElement('td');
         empty.className = "calendar-empty";
         row.appendChild(empty);
     }
 
-    // Fill days
+    // Main calendar loop
     while (d.getMonth() === month - 1) {
         let cell = document.createElement('td');
         let yearNum = d.getFullYear();
@@ -37,15 +50,27 @@ function renderCalendar(year, month) {
 
         cell.textContent = d.getDate();
         cell.className = "calendar-day";
+
         if (isActionDay(dateStr)) {
-            cell.style.background = "#3ad3ff";
-            cell.title = "В этот день ожидается ваш репост!";
+            cell.style.background = "#3adb62";
+            cell.title = "В этот день вы должны сделать репост!";
+            cell.onclick = function() { window.location.href = "/requests/"; };
+            cell.style.cursor = "pointer";
+        } else if (isRequestDay(dateStr)) {
+            cell.style.background = "#2196F3";
+            cell.title = "В этот день вы подали заявку";
+            const reqId = ownRequestMap[dateStr];
+            if (reqId) {
+                cell.onclick = function() {
+                    window.location.href = "/requests/" + reqId + "/details/";
+                };
+                cell.style.cursor = "pointer";
+            }
         } else {
             cell.style.background = "#ffc0cb";
             cell.title = "Действий не требуется";
         }
 
-        // Add modern hover with a class (rest is handled by your CSS)
         cell.addEventListener("mouseenter", function () {
             cell.classList.add("calendar-hover");
         });
@@ -53,7 +78,6 @@ function renderCalendar(year, month) {
             cell.classList.remove("calendar-hover");
         });
 
-        // End of week: close row
         if (((d.getDay() + 6) % 7) === 6) {
             row.appendChild(cell);
             table.appendChild(row);
@@ -64,11 +88,40 @@ function renderCalendar(year, month) {
         d.setDate(d.getDate() + 1);
     }
 
-    // If leftovers, pad row at end
-    if (row.children.length) table.appendChild(row);
+    if (row.children.length) table.appendChild(row); // trailing days
 
     calendar.appendChild(table);
 }
 
-const today = new Date();
-renderCalendar(today.getFullYear(), today.getMonth() + 1);
+function updateCalendarHeader() {
+    document.getElementById('calendar-title').textContent =
+        monthNames[currentMonth - 1] + " " + currentYear;
+}
+
+function redrawCalendar() {
+    renderCalendar(currentYear, currentMonth);
+    updateCalendarHeader();
+}
+
+// --- On page load ---
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Navigation
+    document.getElementById('prev-month').onclick = function() {
+        currentMonth--;
+        if (currentMonth < 1) {
+            currentMonth = 12;
+            currentYear--;
+        }
+        redrawCalendar();
+    };
+    document.getElementById('next-month').onclick = function() {
+        currentMonth++;
+        if (currentMonth > 12) {
+            currentMonth = 1;
+            currentYear++;
+        }
+        redrawCalendar();
+    };
+    redrawCalendar(); // only this init needed!
+});

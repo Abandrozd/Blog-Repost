@@ -27,14 +27,27 @@ def register(request):
 
 def home(request):
     if request.user.is_authenticated:
+        # For green (actions)
         action_dates = list(
             BlogRequest.objects.filter(saves__user=request.user).exclude(user=request.user)
-            .values_list('start_date', flat=True)
+                .values_list('start_date', flat=True)
         )
         action_dates = [d.strftime("%Y-%m-%d") for d in action_dates]
+
+        # For blue (your requests)
+        own_requests = BlogRequest.objects.filter(user=request.user)
+        own_request_dates = [d.start_date.strftime("%Y-%m-%d") for d in own_requests]
+        own_request_map = {d.start_date.strftime("%Y-%m-%d"): d.id for d in own_requests}
     else:
         action_dates = []
-    return render(request, "webui/home.html", {"action_dates": action_dates})
+        own_request_dates = []
+        own_request_map = {}
+
+    return render(request, "webui/home.html", {
+        "action_dates": action_dates,
+        "own_request_dates": own_request_dates,
+        "own_request_map": json.dumps(own_request_map)
+    })
 
 
 @login_required
@@ -144,7 +157,11 @@ def toggle_save_request(request, pk):
                     share_due_date=share_due_date
                 )
         else:
-            return render(request, "webui/error.html", {"error": "Дата должна быть выбрана."})
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': "Пожалуйста, выберите дату."})
+            else:
+                messages.error(request, "Пожалуйста, выберите дату.")
+                return redirect('available_requests')
 
         referer = request.META.get('HTTP_REFERER')
         if referer and '/requests/' in referer and 'available' not in referer:

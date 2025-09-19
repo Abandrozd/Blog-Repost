@@ -89,14 +89,14 @@
                             <div class="request-card" data-request-id="{{ req.id }}">
                                 <div class="request-title">Название: {{ req.book_name }}</div>
                                 <div class="request-info">Пользователь: {{ req.user.username }}</div>
-                                {% if req.user.profile.genre %}
+                                {% if req.user.profile.genres %}
                                     <div class="request-info">
-                                        Жанр: {{ req.user.profile.get_genre_display }}
+                                        Жанр: {{ req.user.profile.genres }}
                                     </div>
                                 {% endif %}
-                                {% if req.user.profile.groupsize %}
+                                {% if req.user.profile.subscribers_count %}
                                     <div class="request-info">
-                                        Подписчики: {{ req.user.profile.get_groupsize_display }}
+                                        Подписчики: {{ req.user.profile.subscribers_count }}
                                     </div>
                                 {% endif %}
 

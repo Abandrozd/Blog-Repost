@@ -73,10 +73,10 @@
     transition: color 0.3s ease;
 }
 
-/* Make request-card position relative for absolute delete button */
 .request-card {
     position: relative;
     padding: 12px;
+    background: #f8f8ff;
     border: 3px solid #ccc;
     border-radius: 8px;
     margin-bottom: 10px;
@@ -88,10 +88,10 @@
 
 .request-title {
     font-weight: bold;
-    font-size: 14px;   /* smaller font size */
+    font-size: 16px;
     margin-bottom: 8px;
     color: #222;
-    max-width: calc(100% - 30px); /* reduce width to prevent overlap */
+    max-width: calc(100% - 30px);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -233,3 +233,9 @@
     .label { opacity: 1; width: auto; margin-left: 10px; }
 }
 
+.hint-date-field {
+    color: #888;
+    font-size: 0.9em;
+    margin: 4px 0 7px 2px;
+    padding-left: 2px;
+}

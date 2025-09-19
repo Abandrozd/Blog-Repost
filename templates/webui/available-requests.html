@@ -79,14 +79,14 @@
                                 <div class="request-title">Название: {{ req.book_name }}</div>
                                 <div class="request-info">Пользователь: <a href="{% url 'public_profile' req.user.id %}">{{ req.user.username }}</a></div>
 
-                                {% if req.user.profile.genre %}
+                                {% if req.user.profile.genres %}
                                     <div class="request-info">
-                                        Жанр: {{ req.user.profile.get_genre_display }}
+                                        Жанр: {{ req.user.profile.genres }}
                                     </div>
                                 {% endif %}
-                                {% if req.user.profile.groupsize %}
+                                {% if req.user.profile.subscribers_count %}
                                     <div class="request-info">
-                                        Подписчики: {{ req.user.profile.get_groupsize_display }}
+                                        Подписчики: {{ req.user.profile.subscribers_count }}
                                     </div>
                                 {% endif %}
 
@@ -140,6 +140,7 @@
                                                    min="{% if today > req.available_from|date:'Y-m-d' %}{{ today }}{% else %}{{ req.available_from|date:'Y-m-d' }}{% endif %}"
                                                    max="{{ req.available_to|date:'Y-m-d' }}"
                                                    title="Дата до которой пользователь должен сделать пост/репост">
+                                            <div class="hint-date-field">Кликните на поле выше и выберите дату из календаря</div>
                                             <button type="submit" class="btn-primary">Сохранить</button>
                                         </div>
                                     {% endif %}
@@ -182,6 +183,8 @@
                         maxDate: max,
                         disable: disables,
                         locale: "ru",
+                        monthSelectorType: 'static', // optional, keeps month buttons visible
+                        // yearSelectorType: 'dropdown', // <-- Remove or move if it causes errors
                         onDayCreate: function(dObj, dStr, fp, dayElem) {
                             // Add visual indication for disabled dates
                             if (disables.includes(dayElem.dateObj.toISOString().split('T')[0])) {
