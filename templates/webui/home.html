@@ -70,8 +70,8 @@
         <div class="calendar-legend">
             <strong>Обозначения:</strong>
             <ul class="legend-list">
-                <li><span class="legend-color" style="background:#3adb62;"></span>Нужно сделать репост</li>
-                <li><span class="legend-color" style="background:#2196F3;"></span>Ваша заявка подана</li>
+                <li><span class="legend-color" style="background:#3adb62;"></span>Репост </li>
+                <li><span class="legend-color" style="background:#2196F3;"></span>Ваши собственные заявки</li>
                 <li><span class="legend-color" style="background:#ffc0cb;"></span>Нет действий/свободно</li>
             </ul>
         </div>
@@ -101,8 +101,8 @@
 
     <script>
     var actionDates = {{ action_dates|safe }};
-    var requestDates = {{ own_request_dates|safe }};
-    var ownRequestMap = {{ own_request_map|safe }};
+    var requestDueDates = {{ request_due_dates|safe }};
+    var requestDueMap = {{ request_due_map|safe }};
     </script>
     <script src="{% static 'scripts/calendar.js' %}"></script>
 </body>

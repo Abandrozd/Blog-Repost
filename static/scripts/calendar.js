@@ -10,8 +10,8 @@ const monthNames = [
 function isActionDay(date) {
     return actionDates.includes(date);
 }
-function isRequestDay(date) {
-    return requestDates.includes(date);
+function isRequestDueDay(date) {
+    return requestDueDates.includes(date);
 }
 
 function renderCalendar(year, month) {
@@ -52,14 +52,16 @@ function renderCalendar(year, month) {
         cell.className = "calendar-day";
 
         if (isActionDay(dateStr)) {
+            // green
             cell.style.background = "#3adb62";
             cell.title = "В этот день вы должны сделать репост!";
             cell.onclick = function() { window.location.href = "/requests/"; };
             cell.style.cursor = "pointer";
-        } else if (isRequestDay(dateStr)) {
+        } else if (isRequestDueDay(dateStr)) {
+            // blue corrected
             cell.style.background = "#2196F3";
-            cell.title = "В этот день вы подали заявку";
-            const reqId = ownRequestMap[dateStr];
+            cell.title = "В этот день по вашей заявке ожидается репост";
+            const reqId = requestDueMap[dateStr];
             if (reqId) {
                 cell.onclick = function() {
                     window.location.href = "/requests/" + reqId + "/details/";

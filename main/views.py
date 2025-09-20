@@ -27,26 +27,27 @@ def register(request):
 
 def home(request):
     if request.user.is_authenticated:
-        # For green (actions)
         action_dates = list(
             BlogRequest.objects.filter(saves__user=request.user).exclude(user=request.user)
                 .values_list('start_date', flat=True)
         )
         action_dates = [d.strftime("%Y-%m-%d") for d in action_dates]
 
-        # For blue (your requests)
-        own_requests = BlogRequest.objects.filter(user=request.user)
-        own_request_dates = [d.start_date.strftime("%Y-%m-%d") for d in own_requests]
-        own_request_map = {d.start_date.strftime("%Y-%m-%d"): d.id for d in own_requests}
+        # All SavedRequest rows that relate to requests YOU created:
+        my_requests = BlogRequest.objects.filter(user=request.user)
+        blue_dates = SavedRequest.objects.filter(request__in=my_requests).exclude(share_due_date=None)
+        # Dict: date string => id (for redirect)
+        request_due_map = {s.share_due_date.strftime("%Y-%m-%d"): s.request.id for s in blue_dates}
+        request_due_dates = list(request_due_map.keys())
     else:
         action_dates = []
-        own_request_dates = []
-        own_request_map = {}
+        request_due_dates = []
+        request_due_map = {}
 
     return render(request, "webui/home.html", {
         "action_dates": action_dates,
-        "own_request_dates": own_request_dates,
-        "own_request_map": json.dumps(own_request_map)
+        "request_due_dates": json.dumps(request_due_dates),
+        "request_due_map": json.dumps(request_due_map),
     })
 
 
