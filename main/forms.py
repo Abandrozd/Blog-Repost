@@ -67,23 +67,52 @@ class CustomUserCreationForm(UserCreationForm):
         return user
 
 class BlogRequestForm(forms.ModelForm):
+    unavailable_dates = forms.CharField(
+        required=False,
+        label="Недоступные даты",
+        help_text="Выберите даты, когда вы НЕ сможете выполнить запрос по этой заявке.",
+        widget=forms.TextInput(attrs={'class': 'unavailable-dates-input', 'autocomplete': 'off'})
+    )
     class Meta:
         model = BlogRequest
-        fields = ['book_name', 'start_date', 'available_from', 'available_to']
+        fields = ['book_name', 'author_page_link', 'start_date', 'available_from', 'available_to', 'unavailable_dates']
         labels = {
             'book_name': 'Название книги',
+            'author_page_link': 'Ссылка на книгу',
             'start_date': 'Дата старта',
             'available_from': 'Свободен с',
             'available_to': 'Свободен по',
+            'unavailable_dates': 'Недоступные даты',
         }
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
-            'available_from': forms.DateInput(attrs={'type': 'date'}),
-            'available_to': forms.DateInput(attrs={'type': 'date'}),
+            'start_date': forms.DateInput(attrs={'class': 'flatpickr-input', 'autocomplete': 'off'}),
+            'available_from': forms.DateInput(attrs={'class': 'flatpickr-input', 'autocomplete': 'off'}),
+            'available_to': forms.DateInput(attrs={'class': 'flatpickr-input', 'autocomplete': 'off'}),
+            'author_page_link': forms.URLInput(attrs={'class': 'form-field', 'placeholder': 'https://...'})
         }
 
+    def clean_unavailable_dates(self):
+        raw = self.cleaned_data['unavailable_dates']
+        # Split by comma, strip whitespace, validate as dates if needed
+        dates = [d.strip() for d in raw.split(',') if d.strip()]
+        return dates
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        # Cleaned unavailable_dates: save as list/JSON
+        if isinstance(self.cleaned_data['unavailable_dates'], str):
+            dates = [d.strip() for d in self.cleaned_data['unavailable_dates'].split(',') if d.strip()]
+        else:
+            dates = self.cleaned_data['unavailable_dates']
+        instance.unavailable_dates = dates
+        if commit:
+            instance.save()
+        return instance
+
+
+
 class ProfileForm(forms.ModelForm):
-    groupsize = forms.ChoiceField(
+    subscribers_count = forms.ChoiceField(
         choices=[
             ('size1', '<100'),
             ('size2', '100-500'),
@@ -93,7 +122,7 @@ class ProfileForm(forms.ModelForm):
         required=True,
         label='Размер подписчиков в группе'
     )
-    genre = forms.ChoiceField(
+    genres = forms.ChoiceField(
         choices=[
             ('genre1', 'Жанр 1'),
             ('genre2', 'Жанр 2'),
@@ -122,7 +151,13 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['author_page_link', 'groupsize', 'genre', 'litnet_link', 'vk_link',]
+        fields = [
+            'author_page_link',
+            'subscribers_count',
+            'genres',
+            'litnet_link',
+            'vk_link',
+        ]
         labels = {'author_page_link': 'Ссылка на страницу автора',
                   }
         widgets = {

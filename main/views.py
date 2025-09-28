@@ -105,12 +105,15 @@ def available_requests(request):
         .order_by('-start_date')
 
     # Create blocked dates dictionary with properly formatted strings
-    blocked_dates = {}
-    for req in requests:
-        taken_dates = SavedRequest.objects.filter(request=req).values_list('share_due_date', flat=True)
-        blocked_dates[req.id] = [
-            d.strftime("%Y-%m-%d") for d in taken_dates if d is not None
-        ]
+    blocked_dates = {
+        req.id: sorted(
+            {d.strftime("%Y-%m-%d") for d in
+             SavedRequest.objects.filter(request=req).values_list('share_due_date', flat=True)
+             if d is not None}
+            | set(req.unavailable_dates or [])
+        )
+        for req in requests
+    }
 
     context = {
         'requests': requests,
@@ -129,12 +132,11 @@ def toggle_save_request(request, pk):
     if request.method == 'POST':
         share_due_date = request.POST.get('share_due_date')
         user_has_saved = SavedRequest.objects.filter(user=request.user, request=br).exists()
-
-        # Remove request (cancelling) — no date posted
+        # Remove request (cancelling)
         if user_has_saved and not share_due_date:
             SavedRequest.objects.filter(user=request.user, request=br).delete()
 
-        # Saving new request — must have a date
+        # Saving new request - must have a date
         elif share_due_date:
             try:
                 share_due_date_obj = datetime.strptime(share_due_date, '%Y-%m-%d').date()
@@ -142,9 +144,24 @@ def toggle_save_request(request, pk):
                 return render(request, "webui/error.html", {"error": "Неверный формат даты."})
 
             min_allowed = max(date.today(), br.available_from)
-            if share_due_date_obj < min_allowed or share_due_date_obj > br.available_to:
-                return render(request, "webui/error.html", {"error": f"Выберите дату от {min_allowed} до {br.available_to}."})
+            max_allowed = br.available_to
 
+            # --- Your new logic here ---
+            blocked_set = set(br.unavailable_dates or [])
+            # Also add all taken dates by other users (as strings)
+            taken_dates = SavedRequest.objects.filter(request=br).exclude(share_due_date=None).values_list('share_due_date', flat=True)
+            for d in taken_dates:
+                if d:
+                    blocked_set.add(d.strftime('%Y-%m-%d'))
+            share_due_str = share_due_date_obj.strftime('%Y-%m-%d')
+            if (share_due_str in blocked_set
+                    or share_due_date_obj < min_allowed
+                    or share_due_date_obj > max_allowed):
+                messages.error(request, "Эта дата недоступна для выбора. Пожалуйста, выберите другую дату.")
+                return redirect('available_requests')
+            # --- End your logic ---
+
+            # Continue with your existing logic
             date_taken = SavedRequest.objects.filter(request=br, share_due_date=share_due_date).exists()
             if date_taken:
                 messages.error(request, "Этот день уже занят для этой заявки.")
@@ -158,17 +175,15 @@ def toggle_save_request(request, pk):
                     share_due_date=share_due_date
                 )
         else:
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({'success': False, 'error': "Пожалуйста, выберите дату."})
-            else:
-                messages.error(request, "Пожалуйста, выберите дату.")
-                return redirect('available_requests')
+            messages.error(request, "Пожалуйста, выберите дату.")
+            return redirect('available_requests')
 
         referer = request.META.get('HTTP_REFERER')
         if referer and '/requests/' in referer and 'available' not in referer:
             return redirect('requests')
         else:
             return redirect('available_requests')
+
 
 
 

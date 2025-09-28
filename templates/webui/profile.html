@@ -52,14 +52,14 @@
                     <div class="profile-info-values">
                         <div class="profile-value">{{ user.username }}</div>
                         <div class="profile-value">
-                            {{ form.groupsize }}
-                            {% for err in form.groupsize.errors %}
+                            {{ form.subscribers_count }}
+                            {% for err in form.subscribers_count.errors %}
                                 <div class="error-message">{{ err }}</div>
                             {% endfor %}
                         </div>
                         <div class="profile-value">
-                            {{ form.genre }}
-                            {% for err in form.genre.errors %}
+                            {{ form.genres }}
+                            {% for err in form.genres.errors %}
                                 <div class="error-message">{{ err }}</div>
                             {% endfor %}
                         </div>

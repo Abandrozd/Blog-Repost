@@ -81,18 +81,18 @@
 
                                 {% if req.user.profile.genres %}
                                     <div class="request-info">
-                                        <b>Жанр:</b> {{ req.user.profile.genres }}
+                                        <b>Жанр:</b> {{ req.user.profile.get_genres_display }}
                                     </div>
                                 {% endif %}
                                 {% if req.user.profile.subscribers_count %}
                                     <div class="request-info">
-                                        <b>Подписчики:</b> {{ req.user.profile.subscribers_count }}
+                                        <b>Подписчики:</b> {{ req.user.profile.get_subscribers_count_display }}
                                     </div>
                                 {% endif %}
 
-                                {% if req.user.profile.author_page_link %}
+                                {% if req.author_page_link %}
                                     <div class="request-info">
-                                      <a href="{{ req.user.profile.author_page_link }}" target="_blank" class="author-page-link-btn"><b>Ссылка на книгу</b></a>
+                                      <a href="{{ req.author_page_link }}" target="_blank" class="author-page-link-btn"><b>Ссылка на книгу</b></a>
                                     </div>
                                 {% endif %}
 
@@ -172,7 +172,7 @@
             if (typeof flatpickr !== "undefined" && typeof blockedDates !== "undefined") {
                 document.querySelectorAll('input.styled-date').forEach(input => {
                     // Find request id from input id (share_due_date_XX)
-                    let reqId = input.id.split('_')[3]; // Note: changed from [2] to [3]
+                    let reqId = input.id.split('_')[3];
                     let disables = blockedDates[reqId] || [];
                     let min = input.getAttribute('min');
                     let max = input.getAttribute('max');
@@ -187,11 +187,15 @@
                         // yearSelectorType: 'dropdown', // <-- Remove or move if it causes errors
                         onDayCreate: function(dObj, dStr, fp, dayElem) {
                             // Add visual indication for disabled dates
-                            if (disables.includes(dayElem.dateObj.toISOString().split('T')[0])) {
+                            var dateISO = dayElem.dateObj.getFullYear() + "-" +
+                                          String(dayElem.dateObj.getMonth() + 1).padStart(2, '0') + "-" +
+                                          String(dayElem.dateObj.getDate()).padStart(2, '0');
+                            if (disables.includes(dateISO)) {
                                 dayElem.classList.add('taken-date');
                             }
                         }
                     });
+
                 });
             }
         });

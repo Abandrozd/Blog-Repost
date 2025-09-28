@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'styling/style.css' %}" />
     <link rel="stylesheet" href="{% static 'styling/layout.css' %}" />
     <link rel="stylesheet" href="{% static 'styling/nav.css' %}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
   </head>
   <body>
@@ -46,5 +47,21 @@
         </form>
       </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr('.flatpickr-input', {
+            dateFormat: "Y-m-d",
+            locale: "ru"
+        });
+        flatpickr('.unavailable-dates-input', {
+            mode: "multiple",
+            dateFormat: "Y-m-d",
+            locale: "ru"
+        });
+    });
+    </script>
   </body>
 </html>

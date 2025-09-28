@@ -25,7 +25,7 @@ class UserProfile(models.Model):
     author_page_link = models.URLField(max_length=500, blank=True, verbose_name="Ссылка на страницу автора")
     litnet_link = models.URLField(max_length=500, blank=True, verbose_name="Страница автора на Литнет")
     vk_link = models.URLField(max_length=500, blank=True, verbose_name="Страница автора VK")
-    subscribers_count = models.CharField(blank=True, verbose_name="Количество подписчиков")
+    subscribers_count = models.CharField(blank=True, choices=GROUPSIZE_CHOICES, verbose_name="Количество подписчиков")
     genres = models.CharField(max_length=50, choices=GENRE_CHOICES, blank=True, verbose_name="Жанры автора")
     telegram_nickname = models.CharField(max_length=100, blank=True)
 
@@ -38,12 +38,15 @@ class UserProfile(models.Model):
 class BlogRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book_name = models.CharField(max_length=255)
+    author_page_link = models.URLField(max_length=500, verbose_name="Ссылка на книгу")
     litnet_link = models.URLField(max_length=500, verbose_name="Страница автора на Литнет")
     vk_link = models.URLField(max_length=500, verbose_name="Страница автора VK")
     start_date = models.DateField(verbose_name="Дата старта")
     available_from = models.DateField(verbose_name="Можно начать с")
     available_to = models.DateField(verbose_name="Можно закончить по")
     date_created = models.DateField(auto_now_add=True)
+
+    unavailable_dates = models.JSONField(default=list, blank=True, verbose_name="Недоступные даты (для этой заявки)")
 
     def __str__(self):
         return self.book_name

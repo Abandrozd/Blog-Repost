@@ -84,3 +84,20 @@ header {
 .form-container p label {
     margin-bottom: 5px;
 }
+
+.form-field, input[type="text"], input[type="url"], input[type="date"] {
+    padding: 8px 12px;
+    border: 1.5px solid #d2d2d2;
+    border-radius: 7px;
+    font-size: 15px;
+    background: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.form-field:focus, input[type="text"]:focus, input[type="url"]:focus, input[type="date"]:focus {
+    border-color: #4caf50;
+    outline: none;
+    background: #f7fff8;
+}

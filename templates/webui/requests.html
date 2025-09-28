@@ -52,19 +52,19 @@
                                       data-request-id="{{ req.id }}">{{ req.book_name }}</span>
                             </div>
                             <div class="request-info">
-                                Дата подачи: {{ req.date_created|date:"d.m.Y" }}
+                                <b>Дата подачи:</b> {{ req.date_created|date:"d.m.Y" }}
                             </div>
                             <div class="request-info">
-                                Дата старта:
+                                <b>Дата старта:</b>
                                 <span class="editable"
                                       data-field="start_date"
                                       data-request-id="{{ req.id }}">{{ req.start_date|date:"d.m.Y" }}</span>
                             </div>
                             <div class="request-info">
-                                Свободен с: {{ req.available_from|date:"d.m.Y" }} по {{ req.available_to|date:"d.m.Y" }}
+                                <b>Свободен с:</b> {{ req.available_from|date:"d.m.Y" }} по {{ req.available_to|date:"d.m.Y" }}
                             </div>
                             <div class="request-info">
-                                Откликов: {{ req.acceptance_count }}
+                                <b>Откликов:</b> {{ req.acceptance_count }}
                                 {% if req.acceptance_count > 0 %}
                                     <a href="{% url 'request_details' req.id %}">
                                         Посмотреть кто откликнулся
@@ -88,21 +88,21 @@
                         {% for req in accepted_requests %}
                             <div class="request-card" data-request-id="{{ req.id }}">
                                 <div class="request-title">Название: {{ req.book_name }}</div>
-                                <div class="request-info">Пользователь: {{ req.user.username }}</div>
+                                <div class="request-info"><b>Пользователь:</b> {{ req.user.username }}</div>
                                 {% if req.user.profile.genres %}
                                     <div class="request-info">
-                                        Жанр: {{ req.user.profile.genres }}
+                                        <b>Жанр:</b> {{ req.user.profile.genres }}
                                     </div>
                                 {% endif %}
                                 {% if req.user.profile.subscribers_count %}
                                     <div class="request-info">
-                                        Подписчики: {{ req.user.profile.subscribers_count }}
+                                        <b>Подписчики:</b> {{ req.user.profile.subscribers_count }}
                                     </div>
                                 {% endif %}
 
-                                <div class="request-info">Дата старта: {{ req.start_date }}</div>
-                                <div class="request-info">Свободен с: {{ req.available_from }} по {{ req.available_to }}</div>
-                                <div class="request-info">Дата подачи: {{ req.date_created }}</div>
+                                <div class="request-info"><b>Дата старта:</b> {{ req.start_date }}</div>
+                                <div class="request-info"><b>Свободен с:</b> {{ req.available_from }} по {{ req.available_to }}</div>
+                                <div class="request-info"><b>Дата подачи:</b> {{ req.date_created }}</div>
 
                                 <div class="social-buttons separated">
                                     {% if req.user.profile.vk_link %}
